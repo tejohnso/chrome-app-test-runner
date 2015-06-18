@@ -6,6 +6,7 @@ if (!testFile) {console.log("No test file specified"); process.exit(1);}
 console.log("running test " + testFile + " from " + thisFilePath);
 
 shelljs.rm(thisFilePath + "/test-browserified.js");
+shelljs.rm("-rf", thisFilePath + "/temp-data-dir");
 shelljs.exec("browserify " + testFile + " -o " + thisFilePath + "/test-browserified.js");
 
-shelljs.exec("google-chrome --load-and-launch-app=" + thisFilePath);
+shelljs.exec("google-chrome --user-data-dir=" + thisFilePath + "/temp-data-dir" + " --load-and-launch-app=" + thisFilePath);

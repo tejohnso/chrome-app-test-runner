@@ -1,2 +1,3 @@
 node_modules/
 test-browserify.js
+temp-data-dir

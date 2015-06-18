@@ -18,7 +18,6 @@
     "fileSystem",
     "unlimitedStorage",
     "system.display",
-    "pointerLock",
     "<all_urls>"
   ]
 }

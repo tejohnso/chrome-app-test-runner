@@ -1,2 +1,2 @@
 mocha.setup("bdd");
-mocha.reporter(mocha.WebKit);
+//mocha.reporter(mocha.WebKit);

@@ -1,5 +1,5 @@
 {
-  "name": "mocha-chrome-app-runner",
+  "name": "chrome-app-test-runner",
   "version": "0.0.1",
   "description": "Run mocha tests in a chrome app",
   "dependencies": {
@@ -8,6 +8,7 @@
     "mocha": "^2.2.5",
     "shelljs": "^0.5.1"
   },
+  "bin", "run-test.js",
   "author": "Tyler Johnson(@tejohnso)",
   "license": "ISC"
 }

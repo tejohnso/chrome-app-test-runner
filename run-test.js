@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var cliOptions = require("minimist")(process.argv.slice(2)),
 testFiles = cliOptions._,
 path = require("path"),
@@ -15,13 +16,13 @@ function cleanLaunchEnvironment() {
 }
 
 function browserifyTestFile(file) {
-  shelljs.exec("browserify " + file + " -o " + path.join(thisFilePath, "test-browserified.js"));
+  return shelljs.exec("browserify " + file + " -o " + path.join(thisFilePath, "test-browserified.js")).code;
 }
 
 function runTest(fullFilePath) {
   if (!fullFilePath) {return;}
   cleanLaunchEnvironment();
-  browserifyTestFile(fullFilePath);
+  if (browserifyTestFile(fullFilePath) !== 0) {return;}
   startServer()
   .then(function(serverProcess) {
     var chromeProcess;

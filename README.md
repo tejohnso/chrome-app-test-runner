@@ -1,6 +1,5 @@
-Takes a mocha test file and browserifies it.
-That file is run in the main chrome app window.
+Takes a test file and browserifies it.
+The test file is expected to use node modules and mocha bdd tests.
+An optional mock http server can be specified with --mock-server=<full-path-to-js-file>
 
-Output is to the console vi loca mocha reporter.  
-
-usage: run-test.sh <full-path-to-test-file>
+usage: node run-test.js <full-path-to-test-file> [<full-path-to-test-file> ...] [--mock-server=<full-path>]

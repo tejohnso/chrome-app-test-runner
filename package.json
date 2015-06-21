@@ -2,17 +2,11 @@
   "name": "mocha-chrome-app-runner",
   "version": "0.0.1",
   "description": "Run mocha tests in a chrome app",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
+    "minimist": "^1.1.1",
     "browserify": "^10.2.4",
-    "loca": "^1.0.1",
     "mocha": "^2.2.5",
-    "run-headless-chromium": "0.0.11",
-    "shelljs": "^0.5.1",
-    "xvfb": "^0.2.1"
-  },
-  "scripts": {
-    "test": "test"
+    "shelljs": "^0.5.1"
   },
   "author": "Tyler Johnson(@tejohnso)",
   "license": "ISC"

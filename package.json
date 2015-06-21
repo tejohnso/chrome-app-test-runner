@@ -8,7 +8,7 @@
     "mocha": "^2.2.5",
     "shelljs": "^0.5.1"
   },
-  "bin", "run-test.js",
+  "bin": "run-test.js",
   "author": "Tyler Johnson(@tejohnso)",
   "license": "ISC"
 }

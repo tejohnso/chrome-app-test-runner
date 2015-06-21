@@ -39,8 +39,11 @@ function runTest(fullFilePath) {
     var logOutput = regExp.exec(data.toString());
     if (!logOutput) {return;}
     console.log(logOutput[1]);
-    if (logOutput[1].indexOf("All tests completed!0")) {
-      setTimeout(function() {childProcess.kill();}, 500);
+    if (logOutput[1].indexOf("All tests completed!0") > -1) {
+      return setTimeout(function() {childProcess.kill();}, 500);
+    }
+    if (logOutput[1].indexOf("All tests completed!") > -1) {
+      testFiles = [];
     }
   });
 

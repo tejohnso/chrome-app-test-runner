@@ -19,15 +19,15 @@ function browserifyTestFile(file) {
   return shelljs.exec("browserify " + file + " -o " + path.join(thisFilePath, "test-browserified.js")).code;
 }
 
-function runTest(fullFilePath) {
-  if (!fullFilePath) {return;}
+function runTest(filePath) {
+  if (!filePath) {return;}
   cleanLaunchEnvironment();
-  if (browserifyTestFile(fullFilePath) !== 0) {return;}
+  if (browserifyTestFile(path.join(process.cwd(), filePath)) !== 0) {return;}
   startServer()
   .then(function(serverProcess) {
     var chromeProcess;
 
-    console.log(EOL + "Running test " + fullFilePath);
+    console.log(EOL + "Running test " + path.join(process.cwd(), filePath));
 
     chromeProcess = spawn("google-chrome", 
     ["--enable-logging=stderr",
@@ -57,7 +57,7 @@ function runTest(fullFilePath) {
       console.log("Chrome stdout: " + data);
     });
   });
-};
+}
 
 function startServer() {
   return new Promise(function(resolve, reject) {
@@ -65,7 +65,7 @@ function startServer() {
     if (!cliOptions.hasOwnProperty("mock-server")) {resolve();}
 
     console.log(EOL + "Starting server " + cliOptions["mock-server"]);
-    serverProcess = spawn("node", [cliOptions["mock-server"]]);
+    serverProcess = spawn("node", path.join(process.cwd(), [cliOptions["mock-server"]]));
     console.log("Server pid: " + serverProcess.pid);
     serverProcess.stdout.on("data", function(data) {
       console.log("Mock server: " + data);

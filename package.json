@@ -1,6 +1,6 @@
 {
   "name": "chrome-app-test-runner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Run mocha tests in a chrome app",
   "dependencies": {
     "minimist": "^1.1.1",

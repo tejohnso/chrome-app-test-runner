@@ -22,6 +22,7 @@ function browserifyTestFile(file) {
 function runTest(filePath) {
   if (!filePath) {return;}
   cleanLaunchEnvironment();
+  console.log("browserifying " + path.join(process.cwd(), filePath));
   if (browserifyTestFile(path.join(process.cwd(), filePath)) !== 0) {return;}
   startServer()
   .then(function(serverProcess) {
@@ -64,9 +65,8 @@ function startServer() {
     var serverProcess;
     if (!cliOptions.hasOwnProperty("mock-server")) {resolve();}
 
-    console.log(EOL + "Starting server " + cliOptions["mock-server"]);
-    serverProcess = spawn("node", path.join(process.cwd(), [cliOptions["mock-server"]]));
-    console.log("Server pid: " + serverProcess.pid);
+    console.log(EOL + "Starting server " + path.join(process.cwd(), cliOptions["mock-server"]));
+    serverProcess = spawn("node", [path.join(process.cwd(), cliOptions["mock-server"])]);
     serverProcess.stdout.on("data", function(data) {
       console.log("Mock server: " + data);
       if (/listening on [\d]*/i.test(data.toString())) {

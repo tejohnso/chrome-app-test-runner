@@ -1,0 +1,88 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/bin/npm', 'publish', '.' ]
+2 info using npm@2.11.2
+3 info using node@v0.12.4
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec { raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/home/tyler/development/chrome-app-test-runner',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /home/tyler/.npm/chrome-app-test-runner/0.0.4/package.tgz not in flight; packing
+9 verbose tar pack [ '/home/tyler/.npm/chrome-app-test-runner/0.0.4/package.tgz',
+9 verbose tar pack   '/home/tyler/development/chrome-app-test-runner' ]
+10 verbose tarball /home/tyler/.npm/chrome-app-test-runner/0.0.4/package.tgz
+11 verbose folder /home/tyler/development/chrome-app-test-runner
+12 info prepublish chrome-app-test-runner@0.0.4
+13 verbose addLocalTarball adding from inside cache /home/tyler/.npm/chrome-app-test-runner/0.0.4/package.tgz
+14 silly cache afterAdd chrome-app-test-runner@0.0.4
+15 verbose afterAdd /home/tyler/.npm/chrome-app-test-runner/0.0.4/package/package.json not in flight; writing
+16 verbose afterAdd /home/tyler/.npm/chrome-app-test-runner/0.0.4/package/package.json written
+17 silly publish { name: 'chrome-app-test-runner',
+17 silly publish   version: '0.0.4',
+17 silly publish   description: 'Run mocha tests in a chrome app',
+17 silly publish   dependencies: { minimist: '^1.1.1', browserify: '^10.2.4', shelljs: '^0.5.1' },
+17 silly publish   bin: { 'chrome-app-test-runner': 'run-test.js' },
+17 silly publish   repostory: 'git@github.com:tejohnso/chrome-app-test-runner.git',
+17 silly publish   author: { name: 'Tyler Johnson', url: '@tejohnso' },
+17 silly publish   license: 'ISC',
+17 silly publish   readme: 'Takes a test file and browserifies it.\nThe test file is expected to use node modules and mocha bdd tests.\nAn optional mock http server can be specified with --mock-server=<server-file>\nThe server must output a listening string indicating the port number when it is ready to receive requests.  For example: listening on 8888\n\nusage: node run-test.js <test-file> [<test-file> ...] [--mock-server=<server-file>]\n',
+17 silly publish   readmeFilename: 'README.md',
+17 silly publish   gitHead: '9f925e5d9e8755ed602147bbe40bc9a61a84d96c',
+17 silly publish   _id: 'chrome-app-test-runner@0.0.4',
+17 silly publish   scripts: {},
+17 silly publish   _shasum: '603999c8d4fd09dbf9c501fbcd5c2900fc305a84',
+17 silly publish   _from: '.' }
+18 verbose getPublishConfig undefined
+19 silly mapToRegistry name chrome-app-test-runner
+20 silly mapToRegistry using default registry
+21 silly mapToRegistry registry https://registry.npmjs.org/
+22 silly mapToRegistry uri https://registry.npmjs.org/chrome-app-test-runner
+23 verbose publish registryBase https://registry.npmjs.org/
+24 silly publish uploading /home/tyler/.npm/chrome-app-test-runner/0.0.4/package.tgz
+25 verbose request uri https://registry.npmjs.org/chrome-app-test-runner
+26 verbose request sending authorization for write operation
+27 info attempt registry request try #1 at 4:07:12 PM
+28 verbose request using bearer token for auth
+29 verbose request id 19497a27c548efba
+30 http request PUT https://registry.npmjs.org/chrome-app-test-runner
+31 http 403 https://registry.npmjs.org/chrome-app-test-runner
+32 verbose headers { 'content-type': 'application/json',
+32 verbose headers   'cache-control': 'max-age=60',
+32 verbose headers   'content-length': '95',
+32 verbose headers   'accept-ranges': 'bytes',
+32 verbose headers   date: 'Sun, 21 Jun 2015 20:07:15 GMT',
+32 verbose headers   via: '1.1 varnish',
+32 verbose headers   connection: 'keep-alive',
+32 verbose headers   'x-served-by': 'cache-ord1720-ORD',
+32 verbose headers   'x-cache': 'MISS',
+32 verbose headers   'x-cache-hits': '0',
+32 verbose headers   'x-timer': 'S1434917233.143184,VS0,VE2225' }
+33 verbose request invalidating /home/tyler/.npm/registry.npmjs.org/chrome-app-test-runner on PUT
+34 error publish Failed PUT 403
+35 verbose stack Error: "You cannot publish over the previously published version 0.0.4." : chrome-app-test-runner
+35 verbose stack     at CachingRegistryClient.<anonymous> (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:247:14)
+35 verbose stack     at Request._callback (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:170:14)
+35 verbose stack     at Request.self.callback (/usr/lib/node_modules/npm/node_modules/request/request.js:354:22)
+35 verbose stack     at Request.emit (events.js:110:17)
+35 verbose stack     at Request.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:1207:14)
+35 verbose stack     at Request.emit (events.js:129:20)
+35 verbose stack     at IncomingMessage.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:1153:12)
+35 verbose stack     at IncomingMessage.emit (events.js:129:20)
+35 verbose stack     at _stream_readable.js:908:16
+35 verbose stack     at process._tickCallback (node.js:355:11)
+36 verbose statusCode 403
+37 verbose pkgid chrome-app-test-runner
+38 verbose cwd /home/tyler/development/chrome-app-test-runner
+39 error Linux 4.0.5-1-ARCH
+40 error argv "node" "/usr/bin/npm" "publish" "."
+41 error node v0.12.4
+42 error npm  v2.11.2
+43 error code E403
+44 error "You cannot publish over the previously published version 0.0.4." : chrome-app-test-runner
+45 error If you need help, you may report this error at:
+45 error     <https://github.com/npm/npm/issues>
+46 verbose exit [ 1, true ]

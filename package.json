@@ -1,6 +1,6 @@
 {
   "name": "chrome-app-test-runner",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Run mocha tests in a chrome app",
   "dependencies": {
     "minimist": "^1.1.1",
@@ -8,7 +8,7 @@
     "shelljs": "^0.5.1"
   },
   "bin": "run-test.js",
-  "repostory": "git@github.com:tejohnso/chrome-app-test-runner.git",
+  "repostory": "https://github.com/tejohnso/chrome-app-test-runner",
   "author": "Tyler Johnson(@tejohnso)",
   "license": "ISC"
 }

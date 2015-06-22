@@ -1,3 +1,4 @@
 node_modules/
 test-browserified.js
 temp-data-dir
+*.log

@@ -7,6 +7,9 @@ shelljs = require("shelljs"),
 spawn = require("child_process").spawn,
 regExp = /[^"]*"(.*)", source: chrome-extension/,
 EOL = require("os").EOL;
+chromePath = shelljs.which("google-chrome") ||
+shelljs.which("chrome") ||
+shelljs.which("chromium");
 
 runTest(testFiles.shift());
 
@@ -30,11 +33,11 @@ function runTest(filePath) {
 
     console.log(EOL + "Running test " + path.join(process.cwd(), filePath));
 
-    chromeProcess = spawn("google-chrome", 
+    chromeProcess = spawn(chromePath, 
     ["--enable-logging=stderr",
     "--log-level=0",
     "--user-data-dir=" + path.join(thisFilePath, "temp-data-dir"),
-    " --load-and-launch-app=" + thisFilePath]);
+    " --load-and-launch-app=" + thisFilePath]).on('error', function( err ){ throw err; });
 
     chromeProcess.on("close", function(code) {
       console.log("Closed child process");

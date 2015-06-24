@@ -2,14 +2,34 @@
 var cliOptions = require("minimist")(process.argv.slice(2)),
 testFiles = cliOptions._,
 path = require("path"),
+fs = require("fs"),
 thisFilePath = path.dirname(process.argv[1]),
 shelljs = require("shelljs"),
 spawn = require("child_process").spawn,
 regExp = /[^"]*"(.*)", source: chrome-extension/,
-EOL = require("os").EOL;
+EOL = require("os").EOL,
+isWin = /^win/.test(process.platform);
 chromePath = shelljs.which("google-chrome") ||
 shelljs.which("chrome") ||
 shelljs.which("chromium");
+
+if(isWin && !chromePath) {
+  var path1 = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+  var path2 = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+  var path3 = process.env.USERPROFILE + "\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe";
+
+  if(fs.existsSync(path1)) {
+    chromePath = path1;
+  }
+
+  if(fs.existsSync(path2)) {
+    chromePath = path2;
+  }
+
+  if(fs.existsSync(path3)) {
+    chromePath = path3;
+  }
+}
 
 runTest(testFiles.shift());
 
@@ -31,6 +51,7 @@ function runTest(filePath) {
   .then(function(serverProcess) {
     var chromeProcess;
 
+    console.log(chromePath);
     console.log(EOL + "Running test " + path.join(process.cwd(), filePath));
 
     chromeProcess = spawn(chromePath, 

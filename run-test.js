@@ -6,36 +6,43 @@ fs = require("fs"),
 thisFilePath = path.dirname(process.argv[1]),
 shelljs = require("shelljs"),
 spawn = require("child_process").spawn,
-regExp = /[^"]*"(.*)", source: chrome-extension/,
 EOL = require("os").EOL,
-isWin = /^win/.test(process.platform);
-chromePath = shelljs.which("google-chrome") ||
-shelljs.which("chrome") ||
-shelljs.which("chromium");
+chromePath;
 
-if(isWin && !chromePath) {
-  var path1 = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
-  var path2 = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-  var path3 = process.env.USERPROFILE + "\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe";
+(function findChrome() {
+  var isWin = /^win/.test(process.platform);
 
-  if(fs.existsSync(path1)) {
-    chromePath = path1;
+  chromePath = shelljs.which("google-chrome") ||
+  shelljs.which("chrome") ||
+  shelljs.which("chromium");
+
+  if(isWin && !chromePath) {
+    var paths = [
+      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      process.env.USERPROFILE + "\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe"];
+
+    paths = paths.filter(function(path) {
+      return shelljs.test("-f", path);
+    });
+
+    chromePath = paths[0];
   }
+}());
 
-  if(fs.existsSync(path2)) {
-    chromePath = path2;
-  }
-
-  if(fs.existsSync(path3)) {
-    chromePath = path3;
-  }
+if (!chromePath) {
+  console.log("Chrome could not be found");
+  return;
 }
 
 runTest(testFiles.shift());
 
 function cleanLaunchEnvironment() {
+  var tempChromeDataPath = path.join(thisFilePath, "temp-data-dir");
   shelljs.rm(path.join(thisFilePath, "test-browserified.js"));
-  shelljs.rm("-rf", path.join(thisFilePath, "temp-data-dir"));
+  shelljs.rm("-rf", tempChromeDataPath);
+  shelljs.mkdir(tempChromeDataPath);
+  shelljs.cp(path.join(thisFilePath, "First Run"), tempChromeDataPath);
 }
 
 function browserifyTestFile(file) {
@@ -45,13 +52,13 @@ function browserifyTestFile(file) {
 function runTest(filePath) {
   if (!filePath) {return;}
   cleanLaunchEnvironment();
+
   console.log("browserifying " + path.join(process.cwd(), filePath));
   if (browserifyTestFile(path.join(process.cwd(), filePath)) !== 0) {return;}
   startServer()
   .then(function(serverProcess) {
     var chromeProcess;
 
-    console.log(chromePath);
     console.log(EOL + "Running test " + path.join(process.cwd(), filePath));
 
     chromeProcess = spawn(chromePath, 
@@ -67,11 +74,13 @@ function runTest(filePath) {
     });
 
     chromeProcess.stderr.on("data", function(data) {
-      var logOutput = regExp.exec(data.toString());
+      var regExp = /[^"]*"(.*)", source: chrome-extension/,
+      logOutput = regExp.exec(data.toString());
       if (!logOutput) {return;}
+
       console.log(logOutput[1]);
       if (logOutput[1].indexOf("All tests completed!0") > -1) {
-        return setTimeout(function() {chromeProcess.kill();}, 500);
+        return setTimeout(function() {chromeProcess.kill();}, 800);
       }
       if (logOutput[1].indexOf("All tests completed!") > -1) {
         testFiles = [];

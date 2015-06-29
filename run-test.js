@@ -96,7 +96,7 @@ function runTest(filePath) {
 function startServer() {
   return new Promise(function(resolve, reject) {
     var serverProcess;
-    if (!cliOptions.hasOwnProperty("mock-server")) {resolve();}
+    if (!cliOptions.hasOwnProperty("mock-server")) {return resolve();}
 
     console.log(EOL + "Starting server " + path.join(process.cwd(), cliOptions["mock-server"]));
     serverProcess = spawn("node", [path.join(process.cwd(), cliOptions["mock-server"])]);

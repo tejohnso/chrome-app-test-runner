@@ -15,6 +15,7 @@
     "geolocation",
     "power",
     "storage",
+    "gcm",
     "fileSystem",
     "unlimitedStorage",
     "system.display",

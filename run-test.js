@@ -57,7 +57,7 @@ function runTest(filePath) {
   if (browserifyTestFile(path.join(process.cwd(), filePath)) !== 0) {return;}
   startServer()
   .then(function(serverProcess) {
-    var chromeProcess;
+    var chromeProcess, passing = true;
 
     console.log(EOL + "Running test " + path.join(process.cwd(), filePath));
 
@@ -80,9 +80,11 @@ function runTest(filePath) {
 
       console.log(logOutput[1]);
       if (logOutput[1].indexOf("All tests completed!0") > -1) {
+        if (!passing) {return;}
         return setTimeout(function() {chromeProcess.kill();}, 800);
       }
-      if (logOutput[1].indexOf("All tests completed!") > -1) {
+      if (logOutput[1].indexOf("Uncaught") === 0) {
+        passing = false;
         testFiles = [];
       }
     });

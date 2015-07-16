@@ -58,7 +58,7 @@ function makeFileComplyWithCSP() {
 function runTest(filePath) {
   if (!filePath) {
     if (includeOveralCoverageSummary) {
-      stdout = execSync("istanbul --color report --root coverage text-summary", {timeout: 3000, cwd: __dirname});
+      stdout = execSync("istanbul --color report --root coverage lcov text-summary", {timeout: 3000, cwd: __dirname});
       console.log(stdout.toString());
     }
 

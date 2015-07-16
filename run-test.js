@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 var cliOptions = require("minimist")(process.argv.slice(2)),
 testFiles = cliOptions._,
+includeOveralCoverageSummary = testFiles.length > 1,
 path = require("path"),
 fs = require("fs"),
-thisFilePath = path.dirname(process.argv[1]),
 shelljs = require("shelljs"),
 spawn = require("child_process").spawn,
+execSync = require("child_process").execSync,
 EOL = require("os").EOL,
 chromePath;
 
@@ -38,40 +39,48 @@ if (!chromePath) {
 runTest(testFiles.shift());
 
 function cleanLaunchEnvironment() {
-  var tempChromeDataPath = path.join(thisFilePath, "temp-data-dir");
-  shelljs.rm(path.join(thisFilePath, "test-browserified.js"));
+  var tempChromeDataPath = path.join(__dirname, "temp-data-dir");
+  shelljs.rm(path.join(__dirname, "test-browserified.js"));
   shelljs.rm("-rf", tempChromeDataPath);
   shelljs.mkdir(tempChromeDataPath);
-  shelljs.cp(path.join(thisFilePath, "First Run"), tempChromeDataPath);
+  shelljs.cp(path.join(__dirname, "First Run"), tempChromeDataPath);
 }
 
 function browserifyTestFile(file) {
-  return shelljs.exec("browserify -t browserify-istanbul " + file + " -o " + path.join(thisFilePath, "test-browserified.js")).code;
+  return execSync("browserify -t browserify-istanbul " + file + " -o " + path.join(__dirname, "test-browserified.js"), {cwd: __dirname});
 }
 
 function makeFileComplyWithCSP() {
-  var fileText = fs.readFileSync(path.join(thisFilePath, "test-browserified.js"), "utf-8");
-  fs.writeFileSync(path.join(thisFilePath, "test-browserified.js"), fileText.replace(/= \(Function\('return this'\)\)\(\);/, "= window;"));
+  var fileText = fs.readFileSync(path.join(__dirname, "test-browserified.js"), "utf-8");
+  fs.writeFileSync(path.join(__dirname, "test-browserified.js"), fileText.replace(/= \(Function\('return this'\)\)\(\);/g, "= window;"));
 }
 
 function runTest(filePath) {
-  if (!filePath) {return;}
+  if (!filePath) {
+    if (includeOveralCoverageSummary) {
+      stdout = execSync("istanbul --color report --root coverage text-summary", {timeout: 3000, cwd: __dirname});
+      console.log(stdout.toString());
+    }
+
+    return;
+  }
+
   cleanLaunchEnvironment();
 
   console.log("browserifying " + path.join(process.cwd(), filePath));
-  if (browserifyTestFile(path.join(process.cwd(), filePath)) !== 0) {return;}
+  browserifyTestFile(path.join(process.cwd(), filePath));
   makeFileComplyWithCSP();
   startServer()
   .then(function(serverProcess) {
-    var chromeProcess, passing = true;
+    var chromeProcess, passing = true, chunk = "", regExp = /"(.*)", source: chrome-extension.*/;
 
     console.log(EOL + "Running test " + path.join(process.cwd(), filePath));
 
     chromeProcess = spawn(chromePath, 
     ["--enable-logging=stderr",
     "--log-level=0",
-    "--user-data-dir=" + path.join(thisFilePath, "temp-data-dir"),
-    " --load-and-launch-app=" + thisFilePath]).on('error', function( err ){ throw err; });
+    "--user-data-dir=" + path.join(__dirname, "temp-data-dir"),
+    " --load-and-launch-app=" + __dirname]).on('error', function( err ){ throw err; });
 
     chromeProcess.on("close", function(code) {
       console.log("Closed child process");
@@ -80,23 +89,34 @@ function runTest(filePath) {
     });
 
     chromeProcess.stderr.on("data", function(data) {
-      var regExp = /[^"]*"(.*)", source: chrome-extension/,
-      logOutput = regExp.exec(data.toString());
-      if (!logOutput) {return;}
 
-      if (/^--istanbul-coverage--/.test(logOutput[1])) {
-        return saveCoverage(logOutput[1].substr(21), path.basename(filePath));
-      }
+      chunk += data.toString();
 
-      console.log(logOutput[1]);
+      checkForBrowserOutput();
 
-      if (logOutput[1].indexOf("All tests completed!0") > -1) {
-        if (!passing) {return;}
-        return setTimeout(function() {chromeProcess.kill();}, 800);
-      }
-      if (logOutput[1].indexOf("Uncaught") === 0) {
-        passing = false;
-        testFiles = [];
+      function checkForBrowserOutput() {
+        var parseResult = regExp.exec(chunk),
+        logText;
+
+        if (!parseResult) {return;}
+
+        chunk = chunk.substr(parseResult.index + parseResult[0].length);
+        logText = parseResult[1];
+
+        if (/--istanbul-coverage--/.test(logText)) {
+          return saveCoverage(logText.substr(21), path.basename(filePath));
+        }
+
+        if (logText.indexOf("All tests completed!0") > -1) {
+          if (!passing) {return;}
+          return setTimeout(function() {chromeProcess.kill();}, 800);
+        }
+        if (logText.indexOf("Uncaught") === 0) {
+          passing = false;
+          testFiles = [];
+        }
+
+        checkForBrowserOutput();
       }
     });
 
@@ -126,8 +146,10 @@ function startServer() {
 }
 
 function saveCoverage(coverageJson, fileName) {
-  fs.writeFileSync(path.join(thisFilePath, "coverage", "coverage-" + fileName + ".json"), coverageJson);
-  return shelljs.exec("istanbul --color report --root coverage lcov text-summary");
+  var stdout;
+  fs.writeFileSync(path.join(__dirname, "coverage", "coverage-" + fileName + ".json"), coverageJson);
+  stdout = execSync("istanbul --color report --root coverage --include coverage-" + fileName + ".json lcov text-summary", {timeout: 3000, cwd: __dirname});
+  console.log(stdout.toString());
 }
 
 function stopServer(process) {

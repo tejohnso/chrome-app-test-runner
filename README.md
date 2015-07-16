@@ -1,8 +1,9 @@
 ## Chrome App Test Runner
-This test runner will run mocha tests in a chrome app so that platform integration tests can be run.
+This test runner will run mocha tests in a chrome app.
 
 The test files are expected to use nodejs style modules and mocha bdd style tests.
 
+Test coverage will be output to console for every test file and an overall coverage summary will follow if more than one test was run.
 Test coverage reports can be found in coverage/
 
 #### Providing a mock server

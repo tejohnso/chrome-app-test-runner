@@ -46,7 +46,12 @@ function cleanLaunchEnvironment() {
 }
 
 function browserifyTestFile(file) {
-  return shelljs.exec("browserify " + file + " -o " + path.join(thisFilePath, "test-browserified.js")).code;
+  return shelljs.exec("browserify -t browserify-istanbul " + file + " -o " + path.join(thisFilePath, "test-browserified.js")).code;
+}
+
+function makeFileComplyWithCSP() {
+  var fileText = fs.readFileSync(path.join(thisFilePath, "test-browserified.js"), "utf-8");
+  fs.writeFileSync(path.join(thisFilePath, "test-browserified.js"), fileText.replace(/= \(Function\('return this'\)\)\(\);/, "= window;"));
 }
 
 function runTest(filePath) {
@@ -55,6 +60,7 @@ function runTest(filePath) {
 
   console.log("browserifying " + path.join(process.cwd(), filePath));
   if (browserifyTestFile(path.join(process.cwd(), filePath)) !== 0) {return;}
+  makeFileComplyWithCSP();
   startServer()
   .then(function(serverProcess) {
     var chromeProcess, passing = true;
@@ -78,7 +84,12 @@ function runTest(filePath) {
       logOutput = regExp.exec(data.toString());
       if (!logOutput) {return;}
 
+      if (/^--istanbul-coverage--/.test(logOutput[1])) {
+        return saveCoverage(logOutput[1].substr(21), path.basename(filePath));
+      }
+
       console.log(logOutput[1]);
+
       if (logOutput[1].indexOf("All tests completed!0") > -1) {
         if (!passing) {return;}
         return setTimeout(function() {chromeProcess.kill();}, 800);
@@ -112,6 +123,11 @@ function startServer() {
       console.log("Mock server err: " + data);
     });
   });
+}
+
+function saveCoverage(coverageJson, fileName) {
+  fs.writeFileSync(path.join(thisFilePath, "coverage", "coverage-" + fileName + ".json"), coverageJson);
+  return shelljs.exec("istanbul --color report --root coverage lcov text-summary");
 }
 
 function stopServer(process) {

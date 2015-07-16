@@ -3,6 +3,8 @@ This test runner will run mocha tests in a chrome app so that platform integrati
 
 The test files are expected to use nodejs style modules and mocha bdd style tests.
 
+Test coverage reports can be found in coverage/
+
 #### Providing a mock server
 If your integration tests require a mock http server, the server can be specified with --mock-server=<server-file>
 

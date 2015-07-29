@@ -1,6 +1,6 @@
 {
   "name": "chrome-app-test-runner",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Runs mocha tests in a chrome app",
   "keywords": ["chrome app", "chrome", "test runner", "integration testing"],
   "dependencies": {

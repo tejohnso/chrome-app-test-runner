@@ -40,7 +40,7 @@ function runTests(filePath) {
     function passedTestHandler() {
       serverHandler.stopServer(serverProcess);
       chromeProcess.kill();
-      runTests(testFiles.shift());
+      setTimeout(function() {runTests(testFiles.shift());}, 800);
     }
 
     function failedTestHandler() {

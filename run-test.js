@@ -20,7 +20,7 @@ function runTests(filePath) {
     return;
   }
 
-  require("./testFilePrep.js")(filePath),
+  require("./testFilePrep.js")(filePath);
 
   serverHandler.startServer(cliOptions["mock-server"])
   .then(function(serverProcess) {
@@ -37,12 +37,20 @@ function runTests(filePath) {
     " --load-and-launch-app=" + __dirname], {detached: true})
     .on('error', function( err ){ throw err; });
 
-    chromeProcess.on("close", function(code) {
+    function passedTestHandler() {
       serverHandler.stopServer(serverProcess);
+      chromeProcess.kill();
       runTests(testFiles.shift());
-    });
+    }
 
-    logOutputHandler = require("./logOutputHandler.js")(chromeProcess, filePath);
+    function failedTestHandler() {
+      serverHandler.stopServer(serverProcess);
+      chromeProcess.kill();
+      process.exitCode = 1;
+    }
+
+    logOutputHandler = require("./logOutputHandler.js")
+    (filePath, failedTestHandler, passedTestHandler);
     chromeProcess.stderr.pipe(chromeDebugLogTransform).pipe(logOutputHandler);
     chromeProcess.stdout.on("data", function(data) {
       console.log("Chrome stdout: " + data);

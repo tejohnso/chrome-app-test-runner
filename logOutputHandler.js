@@ -1,5 +1,5 @@
 var coverageReporter = require("./coverageReporter.js");
-module.exports = function(chromeProcess, filePath) {
+module.exports = function(filePath, failHandler, passHandler) {
   var chunks = "",
   logLine,
   path = require("path"),
@@ -20,9 +20,14 @@ module.exports = function(chromeProcess, filePath) {
     }
 
     console.log(logLine.slice(0, -1));
-    if (/^All tests completed!0/.test(logLine)) {
-      chromeProcess.kill();
+    if (/^All tests passed!/.test(logLine)) {
+      passHandler();
     }
+
+    if (/^Failure count: [\d]+/.test(logLine)) {
+      failHandler();
+    }
+
     return callback();
   };
 

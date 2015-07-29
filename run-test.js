@@ -34,7 +34,8 @@ function runTests(filePath) {
     ["--enable-logging=stderr",
     "--log-level=0",
     "--user-data-dir=" + path.join(__dirname, "temp-data-dir"),
-    " --load-and-launch-app=" + __dirname]).on('error', function( err ){ throw err; });
+    " --load-and-launch-app=" + __dirname], {detached: true})
+    .on('error', function( err ){ throw err; });
 
     chromeProcess.on("close", function(code) {
       serverHandler.stopServer(serverProcess);

@@ -21,7 +21,7 @@ module.exports = function(chromeProcess, filePath) {
 
     console.log(logLine.slice(0, -1));
     if (/^All tests completed!0/.test(logLine)) {
-      setTimeout(function() {chromeProcess.kill();}, 800);
+      chromeProcess.kill();
     }
     return callback();
   };

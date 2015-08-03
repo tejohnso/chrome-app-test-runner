@@ -2,13 +2,19 @@
   "name": "chrome-app-test-runner",
   "version": "0.0.20",
   "description": "Runs mocha tests in a chrome app",
-  "keywords": ["chrome app", "chrome", "test runner", "integration testing"],
+  "keywords": [
+    "chrome app",
+    "chrome",
+    "test runner",
+    "integration testing"
+  ],
   "dependencies": {
-    "minimist": "^1.1.1",
-    "istanbul": "^0.3.17",
     "browserify": "^10.2.4",
     "browserify-istanbul": "^0.2.1",
-    "shelljs": "^0.5.1"
+    "istanbul": "^0.3.17",
+    "minimist": "^1.1.1",
+    "shelljs": "^0.5.1",
+    "ws": "^0.7.2"
   },
   "bin": "run-test.js",
   "homepage": "https://github.com/tejohnso/chrome-app-test-runner",
